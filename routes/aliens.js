@@ -4,7 +4,6 @@ const Alien = require('../models/alien');
 const alien = require('../models/alien');
 
 router.get('/', async(req, res) => {
-    // res.send("Get request");
     try{
         const aliens = await Alien.find();
         res.json(aliens);
@@ -41,7 +40,7 @@ router.post('/', async(req, res) => {
 router.patch('/:id', async(req, res) => {
     try{
         const alien = await Alien.findById(req.params.id);
-        alien.sub = req.body.sub;
+        alien.name = req.body.name;
         const a1 = await alien.save()
         res.json(a1);
     }
@@ -53,7 +52,14 @@ router.patch('/:id', async(req, res) => {
 router.delete('/:id', async(req, res) => {
     try{
         const alien = await Alien.findById(req.params.id);
+        if (!alien) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
         const a1 = await alien.deleteOne();
+        res.json({ 
+            message: 'Item deleted successfully' ,
+            "item is": alien
+        });
         res.json(a1);
     }
     catch(error) {
@@ -61,4 +67,4 @@ router.delete('/:id', async(req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router; 
